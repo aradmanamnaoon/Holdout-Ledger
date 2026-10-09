@@ -1,0 +1,228 @@
+# Holdout Ledger
+
+**Explain text and group leakage. Review a repair plan. Keep the test split intact.**
+
+A high evaluation score is hard to trust when training and test records share
+the same content, near-identical templates, or entity. Finding overlap is only the
+first step. You also need to explain the finding, preserve the holdout, and
+record what changed before retraining.
+
+Holdout Ledger is a local dataset-audit workbench for that workflow. It combines
+an auditable Python engine, a CLI, an evidence explorer, persistent SQLite
+snapshots, fingerprint-bound repairs, and CI regression checks. The included
+demo runs without a model API, GPU, account, or external dataset download.
+
+## Three-minute demo
+
+Python 3.11–3.13:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e '.[dev]'
+holdout-ledger demo --output-dir demo-output
+holdout-ledger serve
+```
+
+Open `http://127.0.0.1:8000`, click **Load synthetic demo**, then **Run audit**.
+The standalone `demo-output/audit.html` also opens directly from disk.
+
+The 14 invented records contain four independent split overlaps, one exact-text
+label conflict, a blank record, and a short record. The explorer shows the
+record IDs, declared splits, match witnesses, and connected components. Text
+previews are opt-in outside the synthetic demo.
+
+## What you can do
+
+| Task | Included behavior |
+|---|---|
+| Audit split boundaries | Normalized-exact text, verified lexical near matches, and declared entity groups |
+| Explain a finding | Interactive witness graph, split membership, labels, and optional text previews |
+| Review changes | Explicit removal plan bound to the entire source dataset fingerprint |
+| Preserve evaluation | Keep every test record; preserve validation when its component has no test member |
+| Publish repaired data | Create a separate directory with split JSONL files and a provenance manifest |
+| Compare revisions | Detect new exposed holdout IDs and increased label-conflict counts |
+| Enforce a CI policy | Exit nonzero when configured boundary, label, or blank-record limits are exceeded |
+| Import Hub data | Bounded streaming sample from a pinned Hugging Face dataset commit |
+| Keep audit history | Local SQLite snapshots with pagination and a documented retention limit |
+
+## Input format
+
+Canonical JSONL, one record per line:
+
+```json
+{"id":"train-001","text":"The document text","split":"train","label":"category-a","group_id":"entity-17","metadata":{"source":"synthetic"}}
+```
+
+`id`, `text`, and `split` are required. IDs must be globally unique across all
+input files. Splits are `train`, `validation`, and `test`. Other fields are
+optional. CSV supports the same column names; encode `metadata` as JSON.
+
+Use `group_id` for the unit that must stay independent: a person, session,
+document family, or other domain-specific entity. A whole source website or
+collection can be too broad. Text auditing does not compare image pixels.
+
+## Audit and repair
+
+```bash
+holdout-ledger audit examples/records.jsonl \
+  --config examples/audit_config.json --output audit.json --html audit.html
+holdout-ledger plan audit.json --output review-plan.json
+```
+
+Review the evidence and removal IDs before running:
+
+```bash
+holdout-ledger apply examples/records.jsonl \
+  --plan review-plan.json --output-dir repaired-output
+holdout-ledger audit repaired-output/train.jsonl \
+  repaired-output/validation.jsonl repaired-output/test.jsonl --output repaired-audit.json
+```
+
+The repair rechecks the full source fingerprint and recomputes the plan. Changed
+records, edited removal IDs, changed detector configuration, or runtime-version
+drift cause rejection. Original files remain untouched. Output paths must not
+already exist. The output includes a manifest and the reviewed plan.
+
+The demo repair removes four training records and retains all four test records.
+It resolves the detected split overlap. The conflicting labels and blank record
+remain flagged for review. It does not silently relabel, rewrite, or delete
+holdout examples. Retrain and evaluate before claiming a model improvement.
+
+## Python and CI
+
+```python
+from holdout_ledger import AuditConfig, audit, make_plan
+from holdout_ledger.demo import demo_records
+from holdout_ledger.gates import gate
+
+report = audit(demo_records(), AuditConfig())
+print(report.summary)
+print(gate(report))
+plan = make_plan(report)
+```
+
+```bash
+holdout-ledger gate audit.json --policy examples/ci_policy.json
+holdout-ledger compare baseline-audit.json current-audit.json
+```
+
+Exit codes: `0` means the operation succeeded or the check passed; `1` means a
+policy or regression check failed; `2` means invalid input or an operational
+error. Creating an audit alone does not imply it passed a policy.
+
+`compare` requires the same configuration, candidate mode, and runtime versions.
+It compares dataset identities and exposed record IDs, not model accuracy.
+Stable IDs across dataset revisions are important for interpreting a delta.
+
+## Hugging Face imports
+
+Install `python -m pip install -e '.[hf]'`. The `import-hf` command requires a
+dataset name, its full 40-character commit SHA, the source split, target split,
+text column, explicit row limit, and output path. See `holdout-ledger import-hf
+--help`. Optional subset, group, and label columns are supported.
+
+The import is a declared bounded sample, not an audit of the entire Hub dataset.
+Each record stores the dataset revision, original split, row index, subset, and
+sample limit. No remote dataset scripts are executed by this application. The
+adapter has contract tests with a controlled stream; live Hub access is not part
+of the offline verification suite.
+
+## Detector and architecture
+
+```mermaid
+flowchart TD
+  A[Canonical records] --> B[Normalize and fingerprint]
+  B --> C[Exact text and group witnesses]
+  B --> D[Near-text candidate search]
+  D --> E[Exact Jaccard verification]
+  C --> F[Connected components]
+  E --> F
+  F --> G[Audit snapshot and explorer]
+  G --> H[Reviewable repair plan]
+  H --> I[Verified separate output]
+```
+
+- Unicode NFKC, case folding, and whitespace normalization define exact text.
+  Persian ی/ک folding is optional. Case and compatibility folding can be wrong
+  for code or case-sensitive identifiers; choose inputs and review accordingly.
+- Token shingles define lexical Jaccard similarity. Exhaustive mode checks every
+  representative pair within the configured limit. LSH retrieves approximate
+  candidates and verifies their exact Jaccard score before reporting a match.
+- Exact duplicates and groups use linear witness stars, avoiding quadratic
+  cliques. Clusters represent transitive connected components. Membership does
+  not imply every pair exceeds the near-match threshold.
+- A holdout is exposed when a connected component includes a lower-priority
+  split. Priority is test, then validation, then train for preservation. Metrics
+  separate witness counts, affected records, and exposed holdout IDs.
+- Blank text is flagged rather than indexed as an empty duplicate. Conflicting
+  labels are checked on normalized-exact text, not every entity group.
+- SHA-256 binds the full source fields, report configuration, and recorded
+  environment. These unkeyed hashes detect edits; they are not signatures or
+  proof against a malicious artifact author.
+
+## Measured verification
+
+The checked-in [synthetic benchmark result](benchmarks/result-local.json) contains
+the configuration, runtime versions, dataset fingerprint, time, and allocation
+measurement. It uses 3,000 seeded synthetic training records plus 100 exact and
+100 one-token near copies in the test split. Local LSH found all 200 injected
+holdouts with no additional exposed IDs. This is a controlled lexical benchmark,
+not an estimate of recall on real data.
+
+```bash
+python benchmarks/benchmark.py --size 3000 --injected 100
+ruff check .
+ruff format --check .
+mypy src
+pytest --cov=holdout_ledger --cov-fail-under=90 -q
+python -m build
+```
+
+The initial local suite has 45 passing tests and 97% statement coverage. CI is
+configured for Python 3.11, 3.12, and 3.13. The exact local Python 3.12 dependency
+environment is recorded in `requirements-dev.lock` and `requirements-runtime.lock`.
+
+An optional Node 24 / jsdom test exercises the dashboard against a live API:
+`npm ci`, start `holdout-ledger serve --port 8765` in another terminal, then run
+`npm run test:ui`. It checks demo loading, persistence, statistics, evidence
+selection, and SVG graph construction. This is a DOM integration check, not a
+visual browser test. See [verification notes](docs/verification.md).
+
+## Deployment and limits
+
+```bash
+docker compose up --build
+```
+
+The Docker service runs as a non-root user, persists SQLite data, and binds the
+host port to loopback. Set `HOLDOUT_LEDGER_TOKEN` before exposing it to others.
+The dashboard accepts that bearer token and keeps it only in the current tab.
+The API is a single-workspace service, not a multi-tenant platform.
+
+API bodies are capped at 5 MiB and 5,000 records. CLI audits default to 100,000
+records. The engine materializes records, shingles, and the LSH index in RAM;
+streamed ingestion does not make the audit constant-memory. Record, edge, and
+candidate limits abort rather than returning a silently truncated report.
+Snapshots have a default retention of the most recent 100 audits. The same
+SQLite database must be shared by server workers. Data never leaves this service
+unless you explicitly use the Hub import or export an artifact.
+
+Not covered: semantic paraphrases with little lexical overlap, temporal leakage,
+feature preprocessing leakage, undisclosed entities, image similarity, and
+contamination from training data you cannot inspect. Absence of a finding is
+not proof of an uncontaminated benchmark. See [methodology](docs/methodology.md).
+
+## How it fits existing tools
+
+[DataTrove](https://github.com/huggingface/datatrove) and
+[Data-Juicer](https://github.com/datajuicer/data-juicer) support broader data
+processing and large-scale deduplication. Holdout Ledger focuses on inspecting
+existing split boundaries, preserving evaluation records, producing reviewed
+repair artifacts, and making revision-level changes visible in local workflows.
+It is not a replacement for distributed corpus processing.
+
+See [architecture](docs/architecture.md), [API](docs/api.md),
+[contributing](CONTRIBUTING.md), and [research notes](docs/research.md).
+
+MIT license.
