@@ -1,0 +1,14 @@
+{"id":"train-exact","text":"The deployment guide says retry failed requests with a bounded budget.","split":"train","label":"safe","group_id":null,"metadata":{}}
+{"id":"test-exact","text":"  THE DEPLOYMENT GUIDE SAYS RETRY FAILED REQUESTS WITH A BOUNDED BUDGET.  ","split":"test","label":"safe","group_id":null,"metadata":{}}
+{"id":"train-near","text":"the model server validates every incoming request and records each latency measurement before returning the structured prediction to the client","split":"train","label":"service","group_id":null,"metadata":{}}
+{"id":"validation-near","text":"the model server validates every incoming request and records each latency measurement before returning the structured prediction to the caller","split":"validation","label":"service","group_id":null,"metadata":{}}
+{"id":"train-group","text":"A red kite circles above the trees.","split":"train","label":"bird","group_id":"session-17","metadata":{}}
+{"id":"test-group","text":"A quiet lake reflects the evening sky.","split":"test","label":"water","group_id":"session-17","metadata":{}}
+{"id":"train-conflict","text":"The review describes a disappointing product.","split":"train","label":"positive","group_id":null,"metadata":{}}
+{"id":"train-conflict-copy","text":"the review describes a disappointing product.","split":"train","label":"negative","group_id":null,"metadata":{}}
+{"id":"train-fa","text":"مدل برای پردازش داده های فارسی طراحی شده است","split":"train","label":"nlp","group_id":null,"metadata":{}}
+{"id":"test-fa","text":"مدل برای پردازش داده های فارسی طراحی شده است","split":"test","label":"nlp","group_id":null,"metadata":{}}
+{"id":"train-clean","text":"Database checkpoints allow recovery after a crash.","split":"train","label":"storage","group_id":null,"metadata":{}}
+{"id":"test-clean","text":"Wind turbines convert moving air into electricity.","split":"test","label":"energy","group_id":null,"metadata":{}}
+{"id":"train-blank","text":"   ","split":"train","label":null,"group_id":null,"metadata":{}}
+{"id":"train-short","text":"Hello","split":"train","label":"greeting","group_id":null,"metadata":{}}

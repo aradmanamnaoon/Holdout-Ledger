@@ -1,0 +1,12 @@
+services:
+  ledger:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - audit-data:/data
+    environment:
+      HOLDOUT_LEDGER_TOKEN: ${HOLDOUT_LEDGER_TOKEN:-}
+    restart: unless-stopped
+volumes:
+  audit-data:

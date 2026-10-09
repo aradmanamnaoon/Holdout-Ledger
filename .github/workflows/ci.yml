@@ -1,0 +1,42 @@
+name: Verify
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -e '.[dev]'
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy src
+      - run: pytest --cov=holdout_ledger --cov-fail-under=90 -q
+      - run: python -m build
+      - run: holdout-ledger demo --output-dir /tmp/ledger-demo
+      - run: holdout-ledger apply /tmp/ledger-demo/records.jsonl --plan /tmp/ledger-demo/plan.json --output-dir /tmp/ledger-fixed
+  dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: python -m pip install -e .
+      - run: npm ci
+      - name: Exercise dashboard DOM and live API
+        run: |
+          holdout-ledger serve --port 8765 --database /tmp/ledger-ui.sqlite3 > /tmp/ledger-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          npm run test:ui

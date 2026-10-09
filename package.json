@@ -1,0 +1,15 @@
+{
+  "name": "holdout-ledger-ui-tests",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Optional DOM integration checks for the local audit workbench",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test:ui": "node tests/ui_smoke.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "30.1.2"
+  }
+}

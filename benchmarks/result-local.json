@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "python": "3.12.14",
+  "records": 3200,
+  "known_injected_holdouts": 200,
+  "true_positives": 200,
+  "false_positives": 0,
+  "false_negatives": 0,
+  "recall": 1.0,
+  "wall_seconds": 6.903777712000192,
+  "peak_python_allocation_bytes": 49631312,
+  "candidate_pairs": 100,
+  "dataset_sha256": "bd04621acb88dff184d519bda0bd6f306b355eb13c753750d38248bca11fc6dd",
+  "report_sha256": "af6a416c5edae2831cb3b31f3a45734c908403a79dca0a9435f1b7e84f11af05",
+  "config": {
+    "normalization": "unicode",
+    "threshold": 0.8,
+    "candidate_threshold": 0.5,
+    "word_ngram": 3,
+    "num_perm": 128,
+    "seed": 42,
+    "mode": "lsh",
+    "exhaustive_limit": 1000,
+    "max_records": 100000,
+    "max_edges": 200000,
+    "max_candidates": 2000000,
+    "include_text": false
+  },
+  "environment": {
+    "python": "3.12.14",
+    "datasketch": "2.0.0",
+    "holdout_ledger": "0.1.0"
+  },
+  "scope": "Synthetic exact copies and one-token suffix mutations; not real-world recall."
+}

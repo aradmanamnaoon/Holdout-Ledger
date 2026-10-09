@@ -1,0 +1,21 @@
+name: Missed or incorrect leakage finding
+description: Help improve detector coverage with a minimal counterexample.
+body:
+  - type: textarea
+    id: records
+    attributes:
+      label: Synthetic record pair or group
+    validations:
+      required: true
+  - type: textarea
+    id: configuration
+    attributes:
+      label: Audit configuration and candidate mode
+    validations:
+      required: true
+  - type: textarea
+    id: reasoning
+    attributes:
+      label: Why should these records share an evaluation unit?
+    validations:
+      required: true

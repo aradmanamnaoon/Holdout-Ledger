@@ -1,0 +1,11 @@
+{
+  "normalization": "unicode",
+  "threshold": 0.8,
+  "candidate_threshold": 0.5,
+  "word_ngram": 3,
+  "num_perm": 128,
+  "seed": 42,
+  "mode": "auto",
+  "exhaustive_limit": 1000,
+  "include_text": false
+}

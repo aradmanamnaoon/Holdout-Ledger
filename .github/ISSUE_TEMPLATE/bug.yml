@@ -1,0 +1,22 @@
+name: Reproducible bug
+description: Report a detector, repair, CLI, or dashboard failure.
+body:
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Share synthetic or redacted canonical records and the exact command. Do not include credentials or private data.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and observed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Python, package versions, operating system, and detector configuration
+    validations:
+      required: true
