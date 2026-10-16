@@ -173,8 +173,7 @@ def main() -> None:
     args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2))
     if args.check and any(
-        run["counts_and_metrics"]["false_negatives"]
-        or run["counts_and_metrics"]["false_positives"]
+        run["counts_and_metrics"]["false_negatives"] or run["counts_and_metrics"]["false_positives"]
         for run in runs
     ):
         raise SystemExit("synthetic labeled benchmark gate failed")
