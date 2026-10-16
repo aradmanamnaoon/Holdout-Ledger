@@ -8,7 +8,6 @@ import argparse
 import json
 import math
 import statistics
-from collections import defaultdict
 from pathlib import Path
 
 from benchmarks.benchmark import confusion, corpus
