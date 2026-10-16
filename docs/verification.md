@@ -1,26 +1,51 @@
 # Verification record
 
-Local verification used Python 3.12.14. The 45 Python tests passed with 97.12%
-statement coverage. Ruff lint and formatting and strict mypy checks passed.
-The audit engine had 100% statement coverage; coverage does not establish
-detector accuracy on unseen data.
+## Independently inspectable hosted software checks
 
-The optional Node 24/jsdom integration check passed against the live local API.
-It loaded the synthetic records, submitted an audit, persisted a snapshot,
-rendered result statistics, inspected four cross-split components, constructed
-an SVG witness graph, and displayed member records without JavaScript errors.
-It does not test browser layout, keyboard accessibility, or screenshots. A
-Chromium download failed in this environment, so those checks remain unverified.
+[GitHub Actions run 37960837739](https://github.com/aradmanamnaoon/Holdout-Ledger/actions/runs/37960837739)
+succeeded on October 9, 2026 at source commit
+`6a432f805b913d393a1eb367ba7bb6a1bee090a5`.
+Python 3.11, 3.12 and 3.13 jobs passed, and the Python 3.12 job log
+states **45 passed in 2.82s** and **97.12% statement coverage**. Lint,
+format, mypy, build, synthetic demo/repair, and jsdom/API dashboard
+integration checks completed. Source coverage and controlled fixtures do
+not establish detector accuracy on unseen datasets.
 
-The seeded benchmark audited 3,200 records in approximately 6.90 seconds, with
-47.3 MiB peak traced Python allocations. Native allocations and total RSS are
-not included. All 200 deliberately injected exact/one-token overlaps were found
-and no other holdout IDs were exposed. This limited synthetic experiment does
-not establish real-world recall or semantic contamination coverage.
+The jsdom test is not a full browser screenshot/layout, keyboard
+accessibility, or manual UX audit. Docker execution, live Hugging Face
+imports, and real participant datasets remain unverified. Hub imports
+have mock-stream contract tests only.
 
-Wheel and source distributions are built locally; wheel smoke verification
-checks packaged static assets, typed-package metadata, and the CLI demo.
-GitHub CI is configured for Python 3.11–3.13 and the dashboard workflow. It has
-not run until the new repository is published. Docker execution and live Hub
-dataset downloads have not been verified here. The HF adapter uses controlled
-stream contract tests.
+## Benchmark evidence distinction
+
+[Historical result-local.json](../benchmarks/result-local.json) reports
+a single author-executed Python 3.12.14 benchmark (3,200 records,
+200/200 **planted positives**, 6.90s wall-clock, and 47.3 MiB peak traced
+Python allocations). **It had no clean negative test records.**
+Consequently its zero false-positive count does not measure specificity;
+its traced Python allocation is not full process RSS.
+
+The revised [benchmark source](../benchmarks/benchmark.py) adds
+prelabeled exact/near/group positives, disjoint and hard lexical negatives,
+multiple seeds, TP/FP/FN/TN, denominator-checked metrics, and a
+`--check` exit-code gate. The [GitHub workflow](../.github/workflows/ci.yml)
+now contains separate LSH and exhaustive *synthetic* benchmark jobs and
+JSON artifact upload. **New-job status: NOT VERIFIED in this document
+until a current-branch hosted run has completed successfully.**
+Do not reuse the October 9 run as if it had executed the new benchmark.
+
+False-positive rate is reported only with an actual negative class.
+The seeded runs do not sample real-world contamination distributions
+or test semantic similarity, feature leakage, participant privacy,
+downstream model performance, or clinical value.
+
+## Reproducibility conditions
+
+Pin the source SHA, runtime/version information, seed list, selected
+`AuditConfig`, generated input hash and audit report hash. Compare
+the same configuration on compatible environments; wall time and
+Python allocation are workload- and machine-dependent. CI installs
+the declared package extras, but it does not directly install the
+checked-in `requirements-*.lock` files. A fully locked end-to-end
+environment and independent scientific replication remain separate
+future verification goals.
