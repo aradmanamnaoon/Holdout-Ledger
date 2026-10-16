@@ -163,15 +163,28 @@ flowchart TD
 
 ## Measured verification
 
-The checked-in [synthetic benchmark result](benchmarks/result-local.json) contains
-the configuration, runtime versions, dataset fingerprint, time, and allocation
-measurement. It uses 3,000 seeded synthetic training records plus 100 exact and
-100 one-token near copies in the test split. Local LSH found all 200 injected
-holdouts with no additional exposed IDs. This is a controlled lexical benchmark,
-not an estimate of recall on real data.
+The [legacy local benchmark record](benchmarks/result-local.json) uses 3,000
+seeded training records and 200 planted *positive* test records. It reported
+all 200 exposed, but included **zero genuinely clean test examples**. Its
+false-positive count therefore cannot establish specificity or a false-positive
+rate, and this historical JSON must not be interpreted as negative-class
+validation. It was not independently rerun in the October 2026 audit.
+
+The revised [labeled synthetic benchmark](benchmarks/benchmark.py) introduces
+three positive classes (exact, lexical near-copy, declared group overlap), plus
+explicitly clean and hard below-threshold negatives. It reports TP, FP, FN, TN,
+denominator-checked precision, recall and false-positive rate for several seeds,
+together with input/report checksums, runtime, and seed ranges.
+
+The `--check` option fails if any *planted* positives are missed or *planted*
+negative holdouts are flagged. Passing this controlled check is a regression
+contract, **not** evidence of sensitivity/specificity on naturally occurring
+text, semantic contamination, or medical/psychology cohorts. See
+[verification notes](docs/verification.md) and [methodology](docs/methodology.md).
 
 ```bash
-python benchmarks/benchmark.py --size 3000 --injected 100
+python benchmarks/benchmark.py --size 120 --injected 6 --negatives 20 \
+  --seeds 42,43,44,45,46 --mode lsh --check --output benchmark-lsh.json
 ruff check .
 ruff format --check .
 mypy src
@@ -179,15 +192,17 @@ pytest --cov=holdout_ledger --cov-fail-under=90 -q
 python -m build
 ```
 
-The initial local suite has 45 passing tests and 97% statement coverage. CI is
-configured for Python 3.11, 3.12, and 3.13. The exact local Python 3.12 dependency
-environment is recorded in `requirements-dev.lock` and `requirements-runtime.lock`.
+The existing [GitHub Actions CI](.github/workflows/ci.yml) runs quality tests
+on Python 3.11–3.13 and the Node 24/jsdom dashboard test. As of the
+2026-10-09 [successful run](https://github.com/aradmanamnaoon/Holdout-Ledger/actions/runs/37960837739),
+the original 45-test suite reached 97.12% statement coverage. That run
+predates this benchmark amendment; do not treat it as verification of the new
+code until new hosted job logs pass. Current runtime lock files are
+`requirements-dev.lock` and `requirements-runtime.lock`; CI's editable
+install resolves permitted dependency ranges rather than using those locks.
 
-An optional Node 24 / jsdom test exercises the dashboard against a live API:
-`npm ci`, start `holdout-ledger serve --port 8765` in another terminal, then run
-`npm run test:ui`. It checks demo loading, persistence, statistics, evidence
-selection, and SVG graph construction. This is a DOM integration check, not a
-visual browser test. See [verification notes](docs/verification.md).
+An optional Node 24 / jsdom test exercises the dashboard and live API. It
+does not verify visual rendering or keyboard accessibility.
 
 ## Deployment and limits
 
