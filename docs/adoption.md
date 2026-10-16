@@ -1,9 +1,11 @@
 # Adoption plan
 
-The goal is at least 20 organic GitHub stars. It is a target, not a result or
-promise. The GitHub repository is public, but meaningful independent research-user adoption\nhas not been verified. Stars, installs and downloads are not peer validation.
+The GitHub repository is public, but meaningful independent research-user adoption
+has not been verified. Stars, installs and downloads are not peer validation.
 
 ## Give a new user a useful first run
+
+See [the first-run walkthrough](first-run.md) for copyable steps and a privacy-safe issue path.
 
 - Keep the synthetic demo under three minutes and runnable without API keys.
 - Lead the README with the split-boundary problem and the evidence workflow.
@@ -12,7 +14,8 @@ promise. The GitHub repository is public, but meaningful independent research-us
 
 ## After a scientifically reviewed release
 
-1. Confirm the current-head GitHub CI, including controlled benchmark checks,\n   passes; obtain user approval before profile changes.
+1. Confirm the current-head GitHub CI, including controlled benchmark checks,
+   passes; obtain user approval before profile changes.
 2. Record an actual 45–60 second demo: load records, inspect a component, review
    removal IDs, retain the test split, and re-audit the repaired data.
 3. Publish the drafted LinkedIn post and X thread after replacing the repository
