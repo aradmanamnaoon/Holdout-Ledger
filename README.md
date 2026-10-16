@@ -204,6 +204,31 @@ install resolves permitted dependency ranges rather than using those locks.
 An optional Node 24 / jsdom test exercises the dashboard and live API. It
 does not verify visual rendering or keyboard accessibility.
 
+### Extended GA-02B evidence: baselines and real neuroscience documentation
+
+Beyond the planted positive/negative regression cases, the
+[same-input baseline experiment](benchmarks/baseline_comparison.py) compares
+normalized-exact, group-only, their union, exhaustive lexical/group reference,
+and MinHash LSH/group on **identical** seeded synthetic inputs. The hosted
+[GA-02B evidence job](https://github.com/aradmanamnaoon/Holdout-Ledger/actions/runs/38865933203)
+recorded 20/60 positives for the exact-only baseline and 60/60 for the full
+detector across five explicitly constructed seeds, with 60 true negatives.
+These are generator-specific results, not unbiased accuracy estimates.
+
+The separate [real-source probe](benchmarks/real_readme_probe.py) fetched **only**
+pinned, public CC0-labeled README text from two OpenNeuro repositories,
+audited 24 text excerpts, and found one cross-source exact duplicate component.
+It did not load participant files, perform an independent human annotation,
+or determine whether a clinical or research evaluation was contaminated.
+The artificial split is by README source, and the two related documents
+are not independent study datasets.
+
+All source rights, SHA pins, benchmark limits and legal/ethical blockers:
+[data and evaluation ledger](docs/evaluation_rights_and_limits.md). A concrete
+[blind annotation and subject-level evaluation protocol](docs/independent_evaluation_protocol.md)
+is prepared, but independent researchers and permissioned study data have
+**not** been obtained. Do not claim independent field validation.
+
 ## Deployment and limits
 
 ```bash
