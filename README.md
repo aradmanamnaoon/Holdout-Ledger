@@ -32,6 +32,11 @@ label conflict, a blank record, and a short record. The explorer shows the
 record IDs, declared splits, match witnesses, and connected components. Text
 previews are opt-in outside the synthetic demo.
 
+**New here?** Follow the [first-run walkthrough](docs/first-run.md) to inspect
+an explainable cross-split witness, review a fingerprint-bound repair, and
+run the local checks. The example uses invented data and cannot establish
+detector performance on real corpora.
+
 ## What you can do
 
 | Task | Included behavior |
