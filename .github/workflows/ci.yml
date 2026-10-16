@@ -21,6 +21,56 @@ jobs:
       - run: python -m build
       - run: holdout-ledger demo --output-dir /tmp/ledger-demo
       - run: holdout-ledger apply /tmp/ledger-demo/records.jsonl --plan /tmp/ledger-demo/plan.json --output-dir /tmp/ledger-fixed
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e .
+      - name: Labeled LSH positive and negative controls across five seeds
+        run: >-
+          python benchmarks/benchmark.py --size 120 --injected 6
+          --negatives 20 --seeds 42,43,44,45,46 --mode lsh
+          --check --output benchmark-lsh.json
+      - name: Exhaustive lexical oracle across two seeds
+        run: >-
+          python benchmarks/benchmark.py --size 80 --injected 4
+          --negatives 12 --seeds 42,43 --mode exhaustive
+          --check --output benchmark-exhaustive.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: labeled-synthetic-benchmark
+          path: |
+            benchmark-lsh.json
+            benchmark-exhaustive.json
+          if-no-files-found: error
+  evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e .
+      - name: Record resolved hosted environment
+        run: python -m pip freeze > resolved-ci-dependencies.txt
+      - name: Same-input baseline and exhaustive lexical reference comparison
+        run: >-
+          python -m benchmarks.baseline_comparison --size 80 --injected 4
+          --negatives 12 --seeds 42,43,44,45,46
+          --check --output baseline-comparison.json
+      - name: Pinned CC0 OpenNeuro README-only source probe
+        run: python -m benchmarks.real_readme_probe --output real-readme-probe.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: controlled-baselines-and-openneuro-source-probe
+          path: |
+            baseline-comparison.json
+            real-readme-probe.json
+            resolved-ci-dependencies.txt
+          if-no-files-found: error
   dashboard:
     runs-on: ubuntu-latest
     steps:
