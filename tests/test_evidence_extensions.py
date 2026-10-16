@@ -26,7 +26,7 @@ def test_baselines_have_expected_and_different_scopes() -> None:
 def test_wilson_bounds_and_undefined_cases() -> None:
     assert wilson_interval(0, 0) is None
     assert wilson_interval(0, 10)[0] == 0
-    assert wilson_interval(10, 10)[1] == 1
+    assert wilson_interval(10, 10)[1] == pytest.approx(1.0)
     assert 0 < wilson_interval(5, 10)[0] < wilson_interval(5, 10)[1] < 1
 
 
