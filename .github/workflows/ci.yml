@@ -54,6 +54,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install -e .
+      - name: Record resolved hosted environment
+        run: python -m pip freeze > resolved-ci-dependencies.txt
       - name: Same-input baseline and exhaustive lexical reference comparison
         run: >-
           python -m benchmarks.baseline_comparison --size 80 --injected 4
@@ -67,6 +69,7 @@ jobs:
           path: |
             baseline-comparison.json
             real-readme-probe.json
+            resolved-ci-dependencies.txt
           if-no-files-found: error
   dashboard:
     runs-on: ubuntu-latest
