@@ -30,8 +30,16 @@ prelabeled exact/near/group positives, disjoint and hard lexical negatives,
 multiple seeds, TP/FP/FN/TN, denominator-checked metrics, and a
 `--check` exit-code gate. The [GitHub workflow](../.github/workflows/ci.yml)
 now contains separate LSH and exhaustive *synthetic* benchmark jobs and
-JSON artifact upload. **New-job status: NOT VERIFIED in this document
-until a current-branch hosted run has completed successfully.**
+JSON artifact upload. **New-job verified:** [GitHub Actions run 38864517618](https://github.com/aradmanamnaoon/Holdout-Ledger/actions/runs/38864517618)
+completed successfully on 2026-10-16 at source commit
+`6b070153b92adef68874319ca22c14d0820d9a71`.
+Its Python 3.11–3.13 and dashboard jobs passed; the 3.12 log reports
+**55 passing tests and 97.12% statement coverage**. The separate
+benchmark job passed five labeled LSH seed fixtures (18 TP, 20 TN,
+0 FP, 0 FN per seed) and two small exhaustive fixtures (12 TP, 12 TN,
+0 FP, 0 FN per seed). The [JSON benchmark artifact](https://github.com/aradmanamnaoon/Holdout-Ledger/actions/runs/38864517618/artifacts/12029619273)
+was uploaded successfully. These results establish only the deliberately
+constructed fixture contract, not real-corpus detector accuracy.
 Do not reuse the October 9 run as if it had executed the new benchmark.
 
 False-positive rate is reported only with an actual negative class.
