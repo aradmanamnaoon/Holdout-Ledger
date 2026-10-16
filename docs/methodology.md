@@ -81,3 +81,32 @@ and includes tracing overhead.
 To assess a real deployment, manually label a held-out sample of candidate and
 non-candidate pairs, report candidate recall separately from verification quality,
 and repeat with the exact versions and configuration intended for production.
+
+## Labeled synthetic regression benchmark (v2)
+
+The original single-seed positive-only benchmark had no clean test
+records and could not estimate a false-positive rate. Its preserved
+historical JSON is NOT evidence of specificity.
+
+The new seeded fixture supplies three positive classes: normalized-exact
+copies, high-Jaccard one-token near copies, and shared declared-group
+records with otherwise unrelated text. It also supplies true negatives:
+unrelated controls and deliberately below-threshold hard lexical
+near-controls. Labels describe this **specific lexical and declared-group
+contract**, not semantic ground truth in the real world.
+
+Per-seed confusion counts are TP, FP, FN and TN over **only** the
+explicitly labeled test set. Precision and recall use their ordinary
+definitions; FPR is FP/(FP+TN) only if any negative examples exist.
+Undefined denominators are represented as null, never coerced to 0.
+Descriptive seed min/mean/max is not a confidence interval or an
+empirical sampling distribution of actual users.
+
+The `--check` option rejects missing planted positives and improperly
+flagged planted negatives. The independent controls in
+`tests/test_benchmark.py` ensure that an all-positive detector fails on
+negative records and an all-negative detector fails on positives.
+The exhaustive fixture on small inputs is a lexical oracle for the
+declared threshold, **not** a semantic paraphrase oracle. LSH may still
+miss candidates on other data or thresholds. No new results should
+be presented without their hosted job logs and source SHA.
