@@ -1,0 +1,65 @@
+name: First-run feedback (synthetic demo)
+description: Tell us what worked or blocked a first independent run. Public reports must use invented or redacted data.
+title: "[First run] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing! Please use **only synthetic or redacted records**.
+        Never share patient information, proprietary datasets, API tokens, local paths revealing identities, or screenshots containing secrets.
+        This public report is voluntary; it is not telemetry, a signup, or proof of independent validation.
+  - type: dropdown
+    id: stage
+    attributes:
+      label: How far did you get?
+      description: Choose the furthest stage you actually completed.
+      options:
+        - Could not install or start
+        - Installed, but could not run the synthetic CLI demo
+        - Opened the synthetic HTML report
+        - Loaded and audited the synthetic demo in the dashboard
+        - Reviewed a synthetic repair plan
+        - Re-audited separately repaired synthetic data
+    validations:
+      required: true
+  - type: dropdown
+    id: interface
+    attributes:
+      label: Entry point
+      options:
+        - CLI
+        - Web dashboard
+        - Offline HTML report
+        - Multiple
+    validations:
+      required: true
+  - type: textarea
+    id: friction
+    attributes:
+      label: What was confusing or failed?
+      description: A short reproduction using invented data is especially useful. Never paste restricted information.
+      placeholder: "Example: On Python 3.12 / Windows, command ... produced ..."
+    validations:
+      required: true
+  - type: textarea
+    id: useful
+    attributes:
+      label: What, if anything, was useful?
+      description: Optional. It is fine to say that it was not useful.
+    validations:
+      required: false
+  - type: input
+    id: environment
+    attributes:
+      label: Environment (optional)
+      description: Operating system and Python version only. Do not include usernames or secrets.
+      placeholder: "e.g. Windows 11, Python 3.12"
+    validations:
+      required: false
+  - type: checkboxes
+    id: acknowledgment
+    attributes:
+      label: Data safety
+      options:
+        - label: I confirm that this public report contains no patient, proprietary, identifying or secret data.
+          required: true

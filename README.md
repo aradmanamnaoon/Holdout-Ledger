@@ -37,6 +37,8 @@ an explainable cross-split witness, review a fingerprint-bound repair, and
 run the local checks. The example uses invented data and cannot establish
 detector performance on real corpora.
 
+**Tried the synthetic demo?** [Share first-run feedback](https://github.com/aradmanamnaoon/Holdout-Ledger/issues/new?template=first-run-feedback.yml) (including failures). Please do not attach sensitive or proprietary records. Reports are voluntary and do not count as verified unique users.
+
 ## What you can do
 
 | Task | Included behavior |
