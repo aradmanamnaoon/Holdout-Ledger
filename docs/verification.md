@@ -57,3 +57,34 @@ the declared package extras, but it does not directly install the
 checked-in `requirements-*.lock` files. A fully locked end-to-end
 environment and independent scientific replication remain separate
 future verification goals.
+
+## GA-02B baseline and real-source evidence (2026-10-16)
+
+An expanded [hosted push workflow run 38866047011](https://github.com/aradmanamnaoon/Holdout-Ledger/actions/runs/38866047011)
+finished successfully on a code commit
+`f2a2f4aedf9fb8cc257edbc957e6153f27206a73`.
+All six jobs passed (Python 3.11, 3.12, 3.13, controlled benchmarks,
+OpenNeuro evidence and dashboard). The Python 3.12 job log reports **61 passed**
+and **97.12% statement coverage**. Later documentation-only additions and
+an environment-receipt artifact change require their own current-head run.
+
+The [captured baseline/README evidence artifact](https://github.com/aradmanamnaoon/Holdout-Ledger/actions/runs/38865933203/artifacts/12031605486)
+demonstrates five matched synthetic seeds: exact-only baseline 20 TP,
+40 FN and 60 TN pooled, compared with the full lexical-plus-group detector
+60 TP, 0 FN, 60 TN. This **does not** establish natural-dataset superiority
+because the generator explicitly constructs exactly the failure types
+the enhanced detector was built to catch. The exhaustive lexical oracle and
+LSH detector agreed on the synthetic fixtures; no general LSH recall is proven.
+
+The separate OpenNeuro README probe fetched two revision-pinned, public
+CC0-labeled README files and audited 24 eligible paragraphs. It reported
+one cross-source exact overlap cluster affecting two paragraphs, with no
+cross-source lexical near edge. The source documents refer to related NIMH
+resources; the split by source README is artificial, the pair is not a
+clinically meaningful leakage adjudication, and real-world precision/recall
+are **UNKNOWN**. No participant-level files were requested or uploaded.
+
+[Rights and data/model audit](evaluation_rights_and_limits.md) and
+[independent blind annotation protocol](independent_evaluation_protocol.md)
+distinguish verified software tests, partially source-audited document text,
+and still-unavailable human review.
