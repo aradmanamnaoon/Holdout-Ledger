@@ -76,6 +76,20 @@ removal of training examples can change representativeness and class
 balance. Re-audit repaired data and re-train/re-evaluate a model before
 reporting an effect on model performance.
 
+
+### Windows PowerShell equivalent
+
+The backslash line continuations above are for POSIX shells. **PowerShell uses a different syntax**; from the repository root, use these single-line commands instead:
+
+```powershell
+holdout-ledger audit examples/records.jsonl --config examples/audit_config.json --output audit.json --html audit.html
+holdout-ledger plan audit.json --output review-plan.json
+holdout-ledger apply examples/records.jsonl --plan review-plan.json --output-dir repaired-output
+```
+
+Only apply the plan **after manually inspecting** `review-plan.json`. Never upload real sensitive datasets or reports to public issues. To rerun a repair, inspect or rename the previous output directory rather than assuming the tool will overwrite it.
+
+
 ## 5. Run the project checks
 
 ```bash
@@ -104,7 +118,7 @@ and avoid submitting patient or proprietary records to public issues.
 
 ## 7. Report a useful first-user experience
 
-If you try this, please open a [GitHub issue](https://github.com/aradmanamnaoon/Holdout-Ledger/issues/new)
+If you try this, please open the [voluntary first-run feedback form](https://github.com/aradmanamnaoon/Holdout-Ledger/issues/new?template=first-run-feedback.yml)
 with your OS, Python version, synthetic steps to reproduce, expected versus
 observed behavior, and whether the CLI/dashboard worked. **Do not upload
 restricted data.** A reproducible counterexample is more helpful than an
