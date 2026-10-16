@@ -25,17 +25,11 @@ def baseline_ids(rows: list[Record]) -> dict[str, set[str]]:
                 train_texts.add(text)
             if row.group_id is not None:
                 train_groups.add(row.group_id)
-    exact = {
-        row.id
-        for row in rows
-        if row.split == "test" and normalize(row.text) in train_texts
-    }
+    exact = {row.id for row in rows if row.split == "test" and normalize(row.text) in train_texts}
     group = {
         row.id
         for row in rows
-        if row.split == "test"
-        and row.group_id is not None
-        and row.group_id in train_groups
+        if row.split == "test" and row.group_id is not None and row.group_id in train_groups
     }
     return {"normalized_exact": exact, "declared_group": group, "exact_or_group": exact | group}
 
@@ -57,25 +51,15 @@ def compare_seed(size: int, injected: int, negatives: int, seed: int) -> dict:
     baselines = baseline_ids(rows)
     reference = audit(rows, AuditConfig(mode="exhaustive", exhaustive_limit=3000))
     approximate = audit(rows, AuditConfig(mode="lsh"))
-    results = {
-        name: confusion(found, positives, negative_ids) for name, found in baselines.items()
-    }
+    results = {name: confusion(found, positives, negative_ids) for name, found in baselines.items()}
     results["exhaustive_lexical_group"] = confusion(
         set(reference.summary.exposed_holdout_ids), positives, negative_ids
     )
     results["lsh_lexical_group"] = confusion(
         set(approximate.summary.exposed_holdout_ids), positives, negative_ids
     )
-    oracle_near = {
-        (edge.left, edge.right)
-        for edge in reference.edges
-        if edge.kind == "near"
-    }
-    candidate_near = {
-        (edge.left, edge.right)
-        for edge in approximate.edges
-        if edge.kind == "near"
-    }
+    oracle_near = {(edge.left, edge.right) for edge in reference.edges if edge.kind == "near"}
+    candidate_near = {(edge.left, edge.right) for edge in approximate.edges if edge.kind == "near"}
     return {
         "seed": seed,
         "records": len(rows),
@@ -97,9 +81,7 @@ def summarize(runs: list[dict]) -> dict:
     metric_fields = ("true_positives", "false_positives", "false_negatives", "true_negatives")
     out: dict = {}
     for method in runs[0]["metrics"]:
-        totals = {
-            key: sum(run["metrics"][method][key] for run in runs) for key in metric_fields
-        }
+        totals = {key: sum(run["metrics"][method][key] for run in runs) for key in metric_fields}
         recall_range = [run["metrics"][method]["recall"] for run in runs]
         fpr_range = [run["metrics"][method]["false_positive_rate"] for run in runs]
         recall_values = [v for v in recall_range if v is not None]
@@ -108,11 +90,13 @@ def summarize(runs: list[dict]) -> dict:
             "pooled_counts": totals,
             "seed_recall_min_mean_max": (
                 [min(recall_values), statistics.mean(recall_values), max(recall_values)]
-                if recall_values else None
+                if recall_values
+                else None
             ),
             "seed_fpr_min_mean_max": (
                 [min(fpr_values), statistics.mean(fpr_values), max(fpr_values)]
-                if fpr_values else None
+                if fpr_values
+                else None
             ),
             "illustrative_wilson_95_recall": wilson_interval(
                 totals["true_positives"], totals["true_positives"] + totals["false_negatives"]
