@@ -48,7 +48,9 @@ def test_extract_does_not_emit_empty_or_table_lines() -> None:
         "# Heading\n\n"
         + "A valid independent neuroscience experiment summary with enough"
         + " characters and repeated context for a non-identifying text probe.\n\n"
-        + "| a | b | " + "x" * 100 + "\n\n"
+        + "| a | b | "
+        + "x" * 100
+        + "\n\n"
         + "A second independent section discusses acquisition standards for"
         + " research volunteers without listing respondent records.\n\n"
     )
