@@ -30,15 +30,10 @@ SOURCES = (
 
 
 def extract_paragraphs(document: str, limit: int = 12) -> list[str]:
-    candidates = [
-        " ".join(part.split())
-        for part in re.split(r"\n\s*\n", document)
+    candidates = [" ".join(part.split()) for part in re.split(r"\n\s*\n", document)]
+    return [text for text in candidates if 100 <= len(text) <= 800 and not text.startswith("|")][
+        :limit
     ]
-    return [
-        text
-        for text in candidates
-        if 100 <= len(text) <= 800 and not text.startswith("|")
-    ][:limit]
 
 
 def probe(fetcher, limit: int = 12) -> dict:
