@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use Holdout Ledger in research software or reproducibility work, please cite this software repository."
+type: software
+title: "Holdout Ledger: Auditable text and group split-integrity checks"
+authors:
+  - family-names: "Hosseini Moghaddam"
+    given-names: "Seyyed Arad"
+repository-code: "https://github.com/aradmanamnaoon/Holdout-Ledger"
+url: "https://github.com/aradmanamnaoon/Holdout-Ledger"
+version: "0.1.0"
+license: MIT
+keywords:
+  - data leakage
+  - research software
+  - reproducibility
+  - machine learning
+  - train-test split
+abstract: >-
+  Research software for checking text and declared-entity overlap across
+  machine-learning data splits, reviewing evidence, and preparing
+  fingerprint-bound repairs. The examples and benchmark fixtures are
+  synthetic and do not establish real-world detector performance.
